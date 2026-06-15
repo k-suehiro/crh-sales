@@ -2,8 +2,7 @@ const SHEET_NAME = '課題管理';
 const LIST_SHEET_NAME = 'リスト';
 const EMPLOYEE_DB_SPREADSHEET_ID = '1CBhRtlFao3walyQvAPGo2Me17rVVeyMtWalv8FVdHKE';
 const EMPLOYEE_BRANCH = '浜松事業所';
-// ヒアリング用スプレッドシートID（未設定の場合は Script Properties または initializeSpreadsheetId で登録）
-const HEARING_SPREADSHEET_ID = '';
+const HEARING_SPREADSHEET_ID = '1HIrSDh3gKkZnI8BU0Yg_VnHfDr6LVzJYDNxHNc5Ie50EvhDv0uMRzV5z';
 
 // 課題管理シートの列構成（社内ヒアリング用）
 // A:No. B:登録日時 C:営業担当者名 D:所属部署 E:営業歴（年）
