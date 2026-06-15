@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      background: #f4f7fb;
+      color: #111827;
+    }
+
+    body {
+      padding: 12px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: none;
+      margin: 0;
+    }
+
+    .header {
+      padding: 8px 2px 14px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #e0ecff;
+      color: #2563eb;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 12px 0 6px;
+      font-size: 22px;
+      line-height: 1.3;
+      letter-spacing: -0.03em;
+    }
+
+    .lead {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #6b7280;
+    }
+
+    .progress {
+      display: flex;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .progress-item {
+      flex: 1;
+      height: 6px;
+      border-radius: 999px;
+      background: #d9e2ef;
+    }
+
+    .progress-item.active {
+      background: #2563eb;
+    }
+
+    .card {
+      width: 100%;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+      overflow: hidden;
+    }
+
+    .step {
+      display: none;
+      width: 100%;
+      padding: 18px;
+    }
+
+    .step.active {
+      display: block;
+    }
+
+    .step-title {
+      margin: 0 0 4px;
+      font-size: 20px;
+      line-height: 1.3;
+    }
+
+    .step-desc {
+      margin: 0 0 18px;
+      color: #6b7280;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #374151;
+    }
+
+    .required {
+      color: #dc2626;
+      font-size: 11px;
+      margin-left: 4px;
+    }
+
+    input,
+    select,
+    textarea {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      min-height: 48px;
+      border: 1px solid #d1d5db;
+      border-radius: 13px;
+      padding: 12px;
+      font-size: 16px;
+      background: #fff;
+      color: #111827;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    textarea {
+      min-height: 120px;
+      line-height: 1.6;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+    }
+
+    input[readonly] {
+      background: #f3f4f6;
+      color: #4b5563;
+      cursor: default;
+    }
+
+    input[readonly]:focus {
+      border-color: #d1d5db;
+      box-shadow: none;
+    }
+
+    .message {
+      display: none;
+      margin: 0 18px 14px;
+      padding: 12px;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .message.success {
+      display: block;
+      color: #047857;
+      background: #ecfdf5;
+    }
+
+    .message.error {
+      display: block;
+      color: #b91c1c;
+      background: #fef2f2;
+    }
+
+    .footer {
+      display: flex;
+      gap: 10px;
+      padding: 14px;
+      background: #f9fafb;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    button {
+      flex: 1;
+      min-width: 0;
+      min-height: 48px;
+      border: none;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .btn-primary {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+    }
+
+    .combobox {
+      position: relative;
+    }
+
+    .combobox-list {
+      display: none;
+      position: absolute;
+      z-index: 20;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      max-height: 220px;
+      margin: 0;
+      padding: 6px 0;
+      list-style: none;
+      overflow-y: auto;
+      border: 1px solid #d1d5db;
+      border-radius: 13px;
+      background: #fff;
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+    }
+
+    .combobox-list.open {
+      display: block;
+    }
+
+    .combobox-item {
+      padding: 12px 14px;
+      font-size: 15px;
+      line-height: 1.4;
+      cursor: pointer;
+    }
+
+    .combobox-item:hover,
+    .combobox-item.active {
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .combobox-item .sub {
+      display: block;
+      margin-top: 2px;
+      font-size: 12px;
+      color: #6b7280;
+      font-weight: 400;
+    }
+
+    .combobox-empty {
+      padding: 12px 14px;
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .combobox-hint {
+      margin: 6px 0 0;
+      font-size: 12px;
+      color: #6b7280;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <div class="header">
+      <div class="badge">浜松事業所 / 社内ヒアリング</div>
+      <h1>営業課題ヒアリング入力</h1>
+      <p class="lead">浜松事業所の営業が困っていることを、1件ずつ記録します。商談後や振り返りのタイミングで、スマホから入力できます。</p>
+
+      <div class="progress">
+        <div class="progress-item active"></div>
+        <div class="progress-item"></div>
+        <div class="progress-item"></div>
+        <div class="progress-item"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <form id="hearingForm">
+        <section class="step active">
+          <h2 class="step-title">対象者情報</h2>
+          <p class="step-desc">営業担当者を選ぶと、所属部署・担当エリア・役職が社員DBから自動入力されます。</p>
+
+          <div class="field">
+            <label for="companyNameSearch">営業担当者名<span class="required">必須</span></label>
+            <div class="combobox">
+              <input
+                id="companyNameSearch"
+                type="text"
+                placeholder="名前を入力（ひらがな・カタカナ可）"
+                autocomplete="off"
+                role="combobox"
+                aria-expanded="false"
+                aria-controls="companyNameList"
+                aria-autocomplete="list"
+              >
+              <ul id="companyNameList" class="combobox-list" role="listbox"></ul>
+              <input type="hidden" id="companyName">
+              <input type="hidden" id="salesEmail">
+            </div>
+            <p class="combobox-hint">浜松事業所の社員から選択します。漢字・ひらがな・カタカナで検索できます。</p>
+          </div>
+
+          <div class="field">
+            <label for="industry">所属部署</label>
+            <input id="industry" type="text" readonly placeholder="担当者を選択すると自動入力されます">
+          </div>
+
+          <div class="field">
+            <label for="area">担当エリア</label>
+            <input id="area" type="text" readonly placeholder="担当者を選択すると自動入力されます">
+          </div>
+
+          <div class="field">
+            <label for="position">役職</label>
+            <input id="position" type="text" readonly placeholder="担当者を選択すると自動入力されます">
+          </div>
+
+          <div class="field">
+            <label for="employeeCount">営業歴（年）</label>
+            <input id="employeeCount" type="number" min="0" step="1" inputmode="numeric" placeholder="例：8">
+          </div>
+        </section>
+
+        <section class="step">
+          <h2 class="step-title">困っていること</h2>
+          <p class="step-desc">営業活動の中で実際に困っていることを、具体的な場面も含めて記録します。</p>
+
+          <div class="field">
+            <label>課題カテゴリ</label>
+            <select id="category">
+            </select>
+          </div>
+
+          <div class="field">
+            <label>困っている内容<span class="required">必須</span></label>
+            <textarea id="issue" placeholder="例：見積作成に時間がかかり、訪問件数が減っている。過去事例を探すのに毎回30分以上かかる"></textarea>
+          </div>
+
+          <div class="field">
+            <label>いまの対処方法</label>
+            <textarea id="currentMethod" placeholder="例：先輩に聞く、個人のExcel、社内チャットで都度確認"></textarea>
+          </div>
+        </section>
+
+        <section class="step">
+          <h2 class="step-title">影響の整理</h2>
+          <p class="step-desc">困りごとの頻度や影響度を整理し、優先して対応すべきかを判断します。</p>
+
+          <div class="field">
+            <label>発生頻度</label>
+            <select id="frequency">
+            </select>
+          </div>
+
+          <div class="field">
+            <label>月あたり影響時間（時間）</label>
+            <input id="lossHours" type="number" min="0" placeholder="例：20">
+          </div>
+
+          <div class="field">
+            <label>深刻度</label>
+            <select id="severity">
+            </select>
+          </div>
+
+          <div class="field">
+            <label>改善したい度合い</label>
+            <select id="intent">
+            </select>
+          </div>
+
+          <div class="field">
+            <label>ツール/AIで改善の余地</label>
+            <select id="aiPossible">
+            </select>
+          </div>
+
+          <div class="field">
+            <label>社内で打開できそうか</label>
+            <select id="proposalPotential">
+            </select>
+          </div>
+
+          <div class="field">
+            <label>ステータス</label>
+            <select id="status">
+            </select>
+          </div>
+        </section>
+
+        <section class="step">
+          <h2 class="step-title">メモ</h2>
+          <p class="step-desc">背景、本人の発言、次に確認したいこと、改善のヒントなどを残します。</p>
+
+          <div class="field">
+            <label>メモ</label>
+            <textarea id="memo" placeholder="例：本人は「見積テンプレがバラバラ」と発言。次回、実際の見積ファイルを共有してもらう予定。"></textarea>
+          </div>
+        </section>
+      </form>
+
+      <div id="message" class="message"></div>
+
+      <div class="footer">
+        <button id="backBtn" class="btn-secondary" type="button" onclick="prevStep()">戻る</button>
+        <button id="nextBtn" class="btn-primary" type="button" onclick="nextStep()">次へ</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentStep = 0;
+    let employees = [];
+    let filteredEmployees = [];
+    let activeComboboxIndex = -1;
+
+    const steps = document.querySelectorAll('.step');
+    const progressItems = document.querySelectorAll('.progress-item');
+    const backBtn = document.getElementById('backBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const companyNameSearch = document.getElementById('companyNameSearch');
+    const companyNameList = document.getElementById('companyNameList');
+
+    updateView();
+
+    function updateView() {
+      steps.forEach((step, index) => {
+        step.classList.toggle('active', index === currentStep);
+      });
+
+      progressItems.forEach((item, index) => {
+        item.classList.toggle('active', index <= currentStep);
+      });
+
+      backBtn.disabled = currentStep === 0;
+      nextBtn.textContent = currentStep === steps.length - 1 ? '登録する' : '次へ';
+
+      window.scrollTo(0, 0);
+    }
+
+    function nextStep() {
+      clearMessage();
+
+      if (!validateStep()) return;
+
+      if (currentStep < steps.length - 1) {
+        currentStep++;
+        updateView();
+        return;
+      }
+
+      submitHearing();
+    }
+
+    function prevStep() {
+      clearMessage();
+
+      if (currentStep > 0) {
+        currentStep--;
+        updateView();
+      }
+    }
+
+    function validateStep() {
+      if (currentStep === 0 && !getValue('companyName')) {
+        showMessage('営業担当者名を社員リストから選択してください。', 'error');
+        companyNameSearch.focus();
+        return false;
+      }
+
+      if (currentStep === 1 && !getValue('issue')) {
+        showMessage('困っている内容は必須です。', 'error');
+        return false;
+      }
+
+      return true;
+    }
+
+    function submitHearing() {
+      const data = {
+        companyName: getValue('companyName'),
+        salesEmail: getValue('salesEmail'),
+        industry: getValue('industry'),
+        employeeCount: getValue('employeeCount'),
+        position: getValue('position'),
+        area: getValue('area'),
+        category: getValue('category'),
+        issue: getValue('issue'),
+        frequency: getValue('frequency'),
+        severity: getValue('severity'),
+        intent: getValue('intent'),
+        currentMethod: getValue('currentMethod'),
+        lossHours: getValue('lossHours'),
+        aiPossible: getValue('aiPossible'),
+        proposalPotential: getValue('proposalPotential'),
+        memo: getValue('memo'),
+        status: getValue('status')
+      };
+
+      nextBtn.disabled = true;
+      backBtn.disabled = true;
+      nextBtn.textContent = '登録中...';
+
+      google.script.run
+        .withSuccessHandler((result) => {
+          showMessage(`登録しました。No.${result.no}`, 'success');
+          clearForm();
+          currentStep = 0;
+          nextBtn.disabled = false;
+          updateView();
+        })
+        .withFailureHandler((error) => {
+          showMessage('登録に失敗しました：' + error.message, 'error');
+          nextBtn.disabled = false;
+          backBtn.disabled = false;
+          nextBtn.textContent = '登録する';
+        })
+        .submitForm(data);
+    }
+
+    function getValue(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    function showMessage(text, type) {
+      const message = document.getElementById('message');
+      message.textContent = text;
+      message.className = `message ${type}`;
+    }
+
+    function clearMessage() {
+      const message = document.getElementById('message');
+      message.textContent = '';
+      message.className = 'message';
+    }
+
+    function clearForm() {
+      document.querySelectorAll('input:not([type="hidden"]), textarea, select').forEach(el => {
+        el.value = '';
+      });
+
+      document.getElementById('companyName').value = '';
+      document.getElementById('salesEmail').value = '';
+      companyNameSearch.value = '';
+      closeCombobox();
+
+      document.getElementById('status').value = '記録済';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadDropdownOptions();
+      loadEmployees();
+      setupEmployeeCombobox();
+    });
+
+    function loadEmployees() {
+      google.script.run
+        .withSuccessHandler((items) => {
+          employees = items || [];
+          renderEmployeeOptions(companyNameSearch.value);
+        })
+        .withFailureHandler((error) => {
+          showMessage('社員リスト取得に失敗しました：' + error.message, 'error');
+        })
+        .getHamamatsuEmployees();
+    }
+
+    function setupEmployeeCombobox() {
+      companyNameSearch.addEventListener('input', () => {
+        clearSelectedEmployee();
+        renderEmployeeOptions(companyNameSearch.value);
+        openCombobox();
+      });
+
+      companyNameSearch.addEventListener('focus', () => {
+        renderEmployeeOptions(companyNameSearch.value);
+        openCombobox();
+      });
+
+      companyNameSearch.addEventListener('keydown', (event) => {
+        if (!companyNameList.classList.contains('open')) {
+          if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            renderEmployeeOptions(companyNameSearch.value);
+            openCombobox();
+          }
+          return;
+        }
+
+        if (event.key === 'ArrowDown') {
+          event.preventDefault();
+          moveComboboxActive(1);
+          return;
+        }
+
+        if (event.key === 'ArrowUp') {
+          event.preventDefault();
+          moveComboboxActive(-1);
+          return;
+        }
+
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          if (activeComboboxIndex >= 0 && filteredEmployees[activeComboboxIndex]) {
+            selectEmployee(filteredEmployees[activeComboboxIndex]);
+          }
+          return;
+        }
+
+        if (event.key === 'Escape') {
+          closeCombobox();
+        }
+      });
+
+      companyNameList.addEventListener('click', (event) => {
+        const item = event.target.closest('[data-index]');
+        if (!item) return;
+
+        const index = Number(item.dataset.index);
+        if (filteredEmployees[index]) {
+          selectEmployee(filteredEmployees[index]);
+        }
+      });
+
+      document.addEventListener('click', (event) => {
+        if (!event.target.closest('.combobox')) {
+          closeCombobox();
+        }
+      });
+
+      companyNameSearch.addEventListener('blur', () => {
+        window.setTimeout(() => {
+          if (getValue('companyName')) return;
+
+          const query = companyNameSearch.value.trim();
+          if (!query) return;
+
+          const normalizedQuery = normalizeForSearch(query);
+          const exactMatch = employees.find((employee) => {
+            return employee.kanji === query
+              || employee.kana === query
+              || normalizeForSearch(employee.kanji) === normalizedQuery
+              || normalizeForSearch(employee.kana) === normalizedQuery;
+          });
+
+          if (exactMatch) {
+            selectEmployee(exactMatch);
+          }
+        }, 150);
+      });
+    }
+
+    function normalizeForSearch(value) {
+      return String(value || '')
+        .trim()
+        .toLowerCase()
+        .replace(/[\u30a1-\u30f6]/g, (char) => String.fromCharCode(char.charCodeAt(0) - 0x60))
+        .replace(/\s+/g, '');
+    }
+
+    function filterEmployees(query) {
+      const normalizedQuery = normalizeForSearch(query);
+
+      if (!normalizedQuery) {
+        return employees.slice(0, 50);
+      }
+
+      return employees.filter((employee) => {
+        const kanji = normalizeForSearch(employee.kanji);
+        const kana = normalizeForSearch(employee.kana);
+        return kanji.includes(normalizedQuery) || kana.includes(normalizedQuery);
+      }).slice(0, 50);
+    }
+
+    function renderEmployeeOptions(query) {
+      filteredEmployees = filterEmployees(query);
+      activeComboboxIndex = -1;
+      companyNameList.innerHTML = '';
+
+      if (employees.length === 0) {
+        companyNameList.innerHTML = '<li class="combobox-empty">社員データを読み込めませんでした</li>';
+        return;
+      }
+
+      if (filteredEmployees.length === 0) {
+        companyNameList.innerHTML = '<li class="combobox-empty">該当する社員がいません</li>';
+        return;
+      }
+
+      filteredEmployees.forEach((employee, index) => {
+        const item = document.createElement('li');
+        item.className = 'combobox-item';
+        item.dataset.index = String(index);
+        item.setAttribute('role', 'option');
+
+        if (employee.kana) {
+          item.innerHTML = `${escapeHtml(employee.kanji)}<span class="sub">${escapeHtml(employee.kana)}</span>`;
+        } else {
+          item.textContent = employee.kanji;
+        }
+
+        companyNameList.appendChild(item);
+      });
+    }
+
+    function moveComboboxActive(direction) {
+      if (filteredEmployees.length === 0) return;
+
+      activeComboboxIndex += direction;
+
+      if (activeComboboxIndex < 0) {
+        activeComboboxIndex = filteredEmployees.length - 1;
+      }
+
+      if (activeComboboxIndex >= filteredEmployees.length) {
+        activeComboboxIndex = 0;
+      }
+
+      companyNameList.querySelectorAll('.combobox-item').forEach((item, index) => {
+        item.classList.toggle('active', index === activeComboboxIndex);
+      });
+
+      const activeItem = companyNameList.querySelector('.combobox-item.active');
+      if (activeItem) {
+        activeItem.scrollIntoView({ block: 'nearest' });
+      }
+    }
+
+    function selectEmployee(employee) {
+      document.getElementById('companyName').value = employee.kanji;
+      document.getElementById('salesEmail').value = employee.mail || '';
+      document.getElementById('industry').value = employee.division || '';
+      document.getElementById('area').value = employee.location || '';
+      document.getElementById('position').value = employee.position || '';
+      companyNameSearch.value = employee.kanji;
+      closeCombobox();
+    }
+
+    function clearSelectedEmployee() {
+      document.getElementById('companyName').value = '';
+      document.getElementById('salesEmail').value = '';
+      document.getElementById('industry').value = '';
+      document.getElementById('area').value = '';
+      document.getElementById('position').value = '';
+    }
+
+    function openCombobox() {
+      companyNameList.classList.add('open');
+      companyNameSearch.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeCombobox() {
+      companyNameList.classList.remove('open');
+      companyNameSearch.setAttribute('aria-expanded', 'false');
+      activeComboboxIndex = -1;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+function loadDropdownOptions() {
+  google.script.run
+    .withSuccessHandler((options) => {
+      setSelectOptions('category', options.category, '選択してください');
+      setSelectOptions('frequency', options.frequency, '選択してください');
+      setSelectOptions('severity', options.severity, '選択してください');
+      setSelectOptions('intent', options.intent, '選択してください');
+      setSelectOptions('aiPossible', options.aiPossible, '選択してください');
+      setSelectOptions('proposalPotential', options.proposalPotential, '選択してください');
+      setSelectOptions('status', options.status, null, '記録済');
+    })
+    .withFailureHandler((error) => {
+      showMessage('リスト取得に失敗しました：' + error.message, 'error');
+    })
+    .getDropdownOptions();
+}
+
+function setSelectOptions(selectId, items, placeholder, defaultValue) {
+  const select = document.getElementById(selectId);
+  select.innerHTML = '';
+
+  if (placeholder) {
+    const option = document.createElement('option');
+    option.value = '';
+    option.textContent = placeholder;
+    select.appendChild(option);
+  }
+
+  items.forEach(item => {
+    const option = document.createElement('option');
+    option.value = item;
+    option.textContent = item;
+    select.appendChild(option);
+  });
+
+  if (defaultValue && items.includes(defaultValue)) {
+    select.value = defaultValue;
+  }
+}
+  </script>
+</body>
+</html>
