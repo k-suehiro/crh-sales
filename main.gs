@@ -2,6 +2,8 @@ const SHEET_NAME = '課題管理';
 const LIST_SHEET_NAME = 'リスト';
 const EMPLOYEE_DB_SPREADSHEET_ID = '1CBhRtlFao3walyQvAPGo2Me17rVVeyMtWalv8FVdHKE';
 const EMPLOYEE_BRANCH = '浜松事業所';
+// ヒアリング用スプレッドシートID（未設定の場合は Script Properties または initializeSpreadsheetId で登録）
+const HEARING_SPREADSHEET_ID = '';
 
 // 課題管理シートの列構成（社内ヒアリング用）
 // A:No. B:登録日時 C:営業担当者名 D:所属部署 E:営業歴（年）
@@ -37,8 +39,48 @@ function doGet() {
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
+function initializeSpreadsheetId() {
+  const activeSpreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+
+  if (!activeSpreadsheet) {
+    throw new Error('ヒアリング用スプレッドシートを開いた状態で実行してください。');
+  }
+
+  const spreadsheetId = activeSpreadsheet.getId();
+  PropertiesService.getScriptProperties().setProperty('HEARING_SPREADSHEET_ID', spreadsheetId);
+  return `スプレッドシートIDを保存しました: ${spreadsheetId}`;
+}
+
+function getHearingSpreadsheet_() {
+  return SpreadsheetApp.openById(getHearingSpreadsheetId_());
+}
+
+function getHearingSpreadsheetId_() {
+  if (HEARING_SPREADSHEET_ID) {
+    return HEARING_SPREADSHEET_ID;
+  }
+
+  const storedId = PropertiesService.getScriptProperties().getProperty('HEARING_SPREADSHEET_ID');
+  if (storedId) {
+    return storedId;
+  }
+
+  const activeSpreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  if (activeSpreadsheet) {
+    const activeId = activeSpreadsheet.getId();
+    PropertiesService.getScriptProperties().setProperty('HEARING_SPREADSHEET_ID', activeId);
+    return activeId;
+  }
+
+  throw new Error(
+    'ヒアリング用スプレッドシートを取得できません。' +
+    'main.gs の HEARING_SPREADSHEET_ID を設定するか、' +
+    'スプレッドシートから Apps Script を開き initializeSpreadsheetId を1回実行してください。'
+  );
+}
+
 function getDropdownOptions() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = getHearingSpreadsheet_();
   const sheet = ss.getSheetByName(LIST_SHEET_NAME);
 
   if (!sheet) {
@@ -134,7 +176,7 @@ function findEmployeeKanaColumnIndex_(headers) {
 }
 
 function submitForm(data) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = getHearingSpreadsheet_();
   const sheet = ss.getSheetByName(SHEET_NAME);
 
   if (!sheet) {
@@ -179,7 +221,7 @@ function submitForm(data) {
 }
 
 function applyDropdownsToRowFromList_(targetSheet, rowNumber) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = getHearingSpreadsheet_();
   const listSheet = ss.getSheetByName(LIST_SHEET_NAME);
 
   if (!listSheet) {
@@ -278,7 +320,7 @@ const ENTRY_HEADERS = [
 ];
 
 function submitEntry(data) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = getHearingSpreadsheet_();
   const sheet = ss.getSheetByName(ENTRY_SHEET_NAME);
 
   if (!sheet) {
